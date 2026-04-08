@@ -51,9 +51,13 @@ prometheus:
     create: true
     annotations: {}
   podSecurityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
     seccompProfile:
       type: RuntimeDefault
   securityContext:
+    runAsNonRoot: true
     allowPrivilegeEscalation: false
     capabilities:
       drop:
@@ -88,9 +92,13 @@ grafana:
     create: true
     annotations: {}
   podSecurityContext:
+    runAsUser: 472
+    runAsGroup: 472
+    fsGroup: 472
     seccompProfile:
       type: RuntimeDefault
   securityContext:
+    runAsNonRoot: true
     allowPrivilegeEscalation: false
     capabilities:
       drop:
