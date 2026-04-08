@@ -33,7 +33,7 @@ Das Chart ist bewusst auf einen internen EKS-Startpunkt ausgelegt:
 
 Wichtig:
 
-- `Grafana`-Default-Passwort muss vor echtem Deployment ueberschrieben werden
+- `Grafana`-Admin-Zugang sollte vor echtem Deployment ueber ein bestehendes Secret oder mindestens per Override gesetzt werden
 - fuer EKS sollten Secrets spaeter ueber AWS Secrets Manager und IRSA/Pod Identity angebunden werden
 - `Qdrant`, `Prometheus` und `Grafana` sollten nicht direkt oeffentlich exponiert werden
 
@@ -170,6 +170,30 @@ helm upgrade --install unicorn-tooling ./helm/unicorn-tooling -n unicorn-tooling
 
 # Beispiel fuer EKS
 helm upgrade --install unicorn-tooling ./helm/unicorn-tooling -n unicorn-tooling --create-namespace -f ./helm/unicorn-tooling/values-eks.yaml
+```
+
+### Grafana Admin Secret
+
+Fuer produktionsnahe Deployments sollte das Grafana-Passwort nicht direkt in den Values stehen.
+Das Chart kann stattdessen ein bestehendes Secret referenzieren.
+
+Beispiel:
+
+```bash
+kubectl create secret generic unicorn-tooling-grafana-admin \
+  -n unicorn-tooling \
+  --from-literal=admin-user='admin' \
+  --from-literal=admin-password='<starkes-passwort>'
+```
+
+Passendes Override:
+
+```yaml
+grafana:
+  admin:
+    existingSecret: unicorn-tooling-grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
 ```
 
 ## Rendering testen

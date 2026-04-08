@@ -32,13 +32,13 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "unicorn-tooling.grafanaFullname" . }}
-                  key: admin-user
+                  name: {{ default (include "unicorn-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
+                  key: {{ .Values.grafana.admin.userKey }}
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "unicorn-tooling.grafanaFullname" . }}
-                  key: admin-password
+                  name: {{ default (include "unicorn-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
+                  key: {{ .Values.grafana.admin.passwordKey }}
           ports:
             - name: http
               containerPort: 3000

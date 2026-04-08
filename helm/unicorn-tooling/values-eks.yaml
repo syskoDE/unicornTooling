@@ -20,7 +20,8 @@ prometheus:
     annotations: {}
 
 grafana:
-  adminPassword: "override-via-secret-or-values"
+  admin:
+    existingSecret: "unicorn-tooling-grafana-admin"
   persistence:
     storageClass: gp3
   serviceAccount:

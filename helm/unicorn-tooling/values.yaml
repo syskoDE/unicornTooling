@@ -74,8 +74,12 @@ grafana:
   service:
     type: ClusterIP
     port: 3000
-  adminUser: admin
-  adminPassword: replace-me
+  admin:
+    existingSecret: ""
+    userKey: admin-user
+    passwordKey: admin-password
+    user: admin
+    password: replace-me
   persistence:
     enabled: true
     storageClass: ""
