@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unicorn-tooling.prometheusFullname" . }}
+  name: {{ include "hostel-tooling.prometheusFullname" . }}
   labels:
-    {{- include "unicorn-tooling.labels" . | nindent 4 }}
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
     app.kubernetes.io/component: prometheus
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "unicorn-tooling.selectorLabels" . | nindent 6 }}
+      {{- include "hostel-tooling.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: prometheus
   template:
     metadata:
       labels:
-        {{- include "unicorn-tooling.selectorLabels" . | nindent 8 }}
+        {{- include "hostel-tooling.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: prometheus
     spec:
-      serviceAccountName: {{ include "unicorn-tooling.prometheusFullname" . }}
+      serviceAccountName: {{ include "hostel-tooling.prometheusFullname" . }}
       automountServiceAccountToken: false
       securityContext:
         {{- toYaml .Values.prometheus.podSecurityContext | nindent 8 }}
@@ -61,11 +61,11 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "unicorn-tooling.prometheusFullname" . }}-config
+            name: {{ include "hostel-tooling.prometheusFullname" . }}-config
         - name: data
           {{- if .Values.prometheus.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "unicorn-tooling.prometheusFullname" . }}
+            claimName: {{ include "hostel-tooling.prometheusFullname" . }}
           {{- else }}
           emptyDir: {}
           {{- end }}

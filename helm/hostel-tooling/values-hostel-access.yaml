@@ -3,7 +3,7 @@ qdrant:
     allowFromWorkloads:
       - namespaceSelector:
           matchLabels:
-            kubernetes.io/metadata.name: unicorn
+            kubernetes.io/metadata.name: hostel
         podSelector:
           matchLabels:
-            app.kubernetes.io/name: unicorn
+            app.kubernetes.io/name: hostel

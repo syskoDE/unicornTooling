@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unicorn-tooling.grafanaFullname" . }}
+  name: {{ include "hostel-tooling.grafanaFullname" . }}
   labels:
-    {{- include "unicorn-tooling.labels" . | nindent 4 }}
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
     app.kubernetes.io/component: grafana
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "unicorn-tooling.selectorLabels" . | nindent 6 }}
+      {{- include "hostel-tooling.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: grafana
   template:
     metadata:
       labels:
-        {{- include "unicorn-tooling.selectorLabels" . | nindent 8 }}
+        {{- include "hostel-tooling.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: grafana
     spec:
-      serviceAccountName: {{ include "unicorn-tooling.grafanaFullname" . }}
+      serviceAccountName: {{ include "hostel-tooling.grafanaFullname" . }}
       automountServiceAccountToken: false
       securityContext:
         {{- toYaml .Values.grafana.podSecurityContext | nindent 8 }}
@@ -32,12 +32,12 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ default (include "unicorn-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
+                  name: {{ default (include "hostel-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
                   key: {{ .Values.grafana.admin.userKey }}
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ default (include "unicorn-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
+                  name: {{ default (include "hostel-tooling.grafanaFullname" .) .Values.grafana.admin.existingSecret }}
                   key: {{ .Values.grafana.admin.passwordKey }}
           ports:
             - name: http
@@ -70,11 +70,11 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "unicorn-tooling.grafanaFullname" . }}-config
+            name: {{ include "hostel-tooling.grafanaFullname" . }}-config
         - name: data
           {{- if .Values.grafana.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "unicorn-tooling.grafanaFullname" . }}
+            claimName: {{ include "hostel-tooling.grafanaFullname" . }}
           {{- else }}
           emptyDir: {}
           {{- end }}

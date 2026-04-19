@@ -1,28 +1,38 @@
 # Open WebUI Helm Wrapper
 
-Dieses Chart fuehrt `Open WebUI` als internes Access-Frontend fuer `unicorn` ein.
+Dieses Chart fuehrt `Open WebUI` als internes Access-Frontend fuer `hostel` ein.
+
+Hinweis fuer das aktuelle Azure-Setup:
+
+- die operative Referenz liegt in
+  [k8s_Deployment/Azure/operations-runbook.md](/Users/t.bettmann/Documents/dev/Agents/SDLC-Design/k8s_Deployment/Azure/operations-runbook.md)
+- produktiv laeuft Open WebUI aktuell auf AKS mit:
+  - Host `chat.syskoplan.cloud`
+  - AKS App Routing
+  - cert-manager + Route53
+  - Entra ID OIDC
+  - Azure Key Vault + External Secrets fuer `open-webui-runtime`
 
 Der Scope ist bewusst klar getrennt:
 
-- `unicornTooling/helm/unicorn-tooling` bleibt Infra-/Ops-Chart fuer Qdrant, Prometheus und Grafana
-- `unicornTooling/helm/open-webui` ist ein separates Access-Frontend fuer menschliche Nutzer
-- `unicorn` bleibt das eigentliche Agenten-Backend und wird nur ueber seine OpenAI-kompatible API angesprochen
+- `hostelTooling/helm/hostel-tooling` bleibt Infra-/Ops-Chart fuer Qdrant, Prometheus und Grafana
+- `hostelTooling/helm/open-webui` ist ein separates Access-Frontend fuer menschliche Nutzer
+- `hostel` bleibt das eigentliche Agenten-Backend und wird nur ueber seine OpenAI-kompatible API angesprochen
 
 ## Architektur
 
-- Namespace: `unicorn-access`
+- Namespace: `hostel-access`
 - Release: `open-webui`
 - Ingress: interner AWS ALB
 - Authentifizierung: OIDC gegen Entra ID
-- Backend fuer Modelle/Chats: `http://unicorn.unicorn.svc.cluster.local:8000/v1`
+- Backend fuer Modelle/Chats: `http://hostel.hostel.svc.cluster.local:8000/v1`
 - keine direkte Verbindung von `Open WebUI` zu `Qdrant`
 
 ## Voraussetzungen
 
-- `unicorn` ist im Namespace `unicorn` deployt
-- `unicorn` ist ueber den Service `unicorn` intern erreichbar
-- die `unicorn`-NetworkPolicy erlaubt Zugriff aus `unicorn-access`
-- AWS Load Balancer Controller ist im Cluster vorhanden
+- `hostel` ist im Namespace `hostel` deployt
+- `hostel` ist ueber den Service `hostel` intern erreichbar
+- die `hostel`-NetworkPolicy erlaubt Zugriff aus `hostel-access`
 - ein internes DNS-/Zertifikats-Setup fuer `chat.<interne-domain>` existiert
 - eine Entra-ID-App fuer OIDC ist registriert
 
@@ -47,40 +57,44 @@ Empfohlener OIDC-Provider-URL-Schnitt fuer Entra ID:
 
 ## Runtime-Secret
 
-Das Chart erwartet ein bestehendes Secret `open-webui-runtime` im Namespace `unicorn-access`.
+Das Chart erwartet ein bestehendes Secret `open-webui-runtime` im Namespace `hostel-access`.
 
 Beispiel:
 
 ```bash
-kubectl create namespace unicorn-access
+kubectl create namespace hostel-access
 
 kubectl create secret generic open-webui-runtime \
-  -n unicorn-access \
+  -n hostel-access \
   --from-literal=webui-secret-key='<stable-random-secret>' \
   --from-literal=oidc-client-secret='<entra-client-secret>' \
-  --from-literal=openai-api-key='placeholder-not-validated-by-unicorn-yet'
+  --from-literal=openai-api-key='placeholder-not-validated-by-hostel-yet'
 ```
 
 Hinweise:
 
 - `webui-secret-key` muss stabil bleiben, sonst brechen Sessions bei Pod-Neustarts
-- `openai-api-key` ist aktuell nur ein Platzhalter, weil `unicorn` die interne OpenAI-kompatible API noch nicht per API-Key schuetzt
+- `openai-api-key` ist aktuell nur ein Platzhalter, weil `hostel` die interne OpenAI-kompatible API noch nicht per API-Key schuetzt
+
+Fuer das aktuelle Azure-Cluster wird das Secret ueber External Secrets aus Key Vault synchronisiert:
+
+- [k8s_Deployment/Azure/external-secrets/externalsecret-open-webui-runtime.yaml](/Users/t.bettmann/Documents/dev/Agents/SDLC-Design/k8s_Deployment/Azure/external-secrets/externalsecret-open-webui-runtime.yaml)
 
 ## Deployment
 
-Zuerst sicherstellen, dass `unicorn` den Zugriff aus `unicorn-access` erlaubt.
+Zuerst sicherstellen, dass `hostel` den Zugriff aus `hostel-access` erlaubt.
 Die passende Beispiel-Freigabe liegt in:
 
-- [unicorn/helm/unicorn/values-eks.yaml](/Users/t.bettmann/Documents/dev/Agents/SDLC-Design/unicorn/helm/unicorn/values-eks.yaml)
+- [hostel/helm/hostel/values-aks.yaml](/Users/t.bettmann/Documents/dev/Agents/SDLC-Design/hostel/helm/hostel/values-aks.yaml)
 
 Danach:
 
 ```bash
 cd /Users/t.bettmann/Documents/dev/Agents/SDLC-Design
-helm upgrade --install open-webui ./unicornTooling/helm/open-webui \
-  -n unicorn-access \
+helm upgrade --install open-webui ./hostelTooling/helm/open-webui \
+  -n hostel-access \
   --create-namespace \
-  -f ./unicornTooling/helm/open-webui/values-eks.yaml
+  -f ./hostelTooling/helm/open-webui/values-aks.yaml
 ```
 
 Hinweis:
@@ -104,5 +118,5 @@ Nach dem Deploy sollten mindestens diese Punkte funktionieren:
 - ALB/Ingress zeigt auf `https://chat.<interne-domain>`
 - Login fuehrt zu Entra ID weiter
 - Callback nach `.../oauth/oidc/callback` funktioniert
-- Modelle aus `unicorn` erscheinen in der Modellliste
-- Chats funktionieren gegen einen vorhandenen `unicorn`-Agenten
+- Modelle aus `hostel` erscheinen in der Modellliste
+- Chats funktionieren gegen einen vorhandenen `hostel`-Agenten

@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "unicorn-tooling.grafanaFullname" . }}
+  name: {{ include "hostel-tooling.grafanaFullname" . }}
   labels:
-    {{- include "unicorn-tooling.labels" . | nindent 4 }}
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
     app.kubernetes.io/component: grafana
 spec:
   podSelector:
     matchLabels:
-      {{- include "unicorn-tooling.selectorLabels" . | nindent 6 }}
+      {{- include "hostel-tooling.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: grafana
   policyTypes:
     - Ingress

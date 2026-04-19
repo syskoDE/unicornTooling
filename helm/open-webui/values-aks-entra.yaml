@@ -1,56 +1,20 @@
 open-webui:
-  replicaCount: 1
-  revisionHistoryLimit: 3
-
-  serviceAccount:
-    name: ""
-
-  podLabels:
-    hostel.ai/access-client: open-webui
-
-  ollama:
-    enabled: false
-
-  pipelines:
-    enabled: false
-
-  tika:
-    enabled: false
-
-  websocket:
-    enabled: true
-    manager: redis
-    redis:
-      enabled: true
-
   persistence:
-    enabled: true
-    provider: local
-    size: 10Gi
-    accessModes:
-      - ReadWriteOnce
-    storageClass: ""
+    storageClass: managed-csi-premium
 
-  service:
-    type: ClusterIP
-    port: 80
-    containerPort: 8080
-
-  enableOpenaiApi: true
   openaiBaseApiUrl: "http://hostel.hostel.svc.cluster.local:8000/v1"
-  openaiApiKey: ""
 
   ingress:
     enabled: true
-    class: alb
-    host: "chat.example.internal"
-    tls: false
+    class: webapprouting.kubernetes.azure.com
+    host: "chat.syskoplan.cloud"
+    tls: true
     annotations: {}
 
   sso:
     enabled: true
     enableSignup: true
-    mergeAccountsByEmail: false
+    mergeAccountsByEmail: true
     enableRoleManagement: false
     enableGroupManagement: false
 
@@ -75,9 +39,9 @@ open-webui:
           name: open-webui-runtime
           key: webui-secret-key
     - name: WEBUI_URL
-      value: "https://chat.example.internal"
+      value: "https://chat.syskoplan.cloud"
     - name: OPENID_REDIRECT_URI
-      value: "https://chat.example.internal/oauth/oidc/callback"
+      value: "https://chat.syskoplan.cloud/oauth/oidc/callback"
     - name: ENABLE_OAUTH_PERSISTENT_CONFIG
       value: "false"
     - name: ENABLE_SIGNUP

@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "unicorn-tooling.qdrantFullname" . }}
+  name: {{ include "hostel-tooling.qdrantFullname" . }}
   labels:
-    {{- include "unicorn-tooling.labels" . | nindent 4 }}
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
     app.kubernetes.io/component: qdrant
 spec:
   podSelector:
     matchLabels:
-      {{- include "unicorn-tooling.selectorLabels" . | nindent 6 }}
+      {{- include "hostel-tooling.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: qdrant
   policyTypes:
     - Ingress
@@ -17,7 +17,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              {{- include "unicorn-tooling.selectorLabels" . | nindent 14 }}
+              {{- include "hostel-tooling.selectorLabels" . | nindent 14 }}
               app.kubernetes.io/component: prometheus
       ports:
         - protocol: TCP

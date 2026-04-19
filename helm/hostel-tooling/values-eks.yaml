@@ -6,11 +6,11 @@ qdrant:
   serviceAccount:
     annotations: {}
   networkPolicy:
-    # Example for later unicorn access within the same namespace:
+    # Example for later hostel access within the same namespace:
     # allowFromWorkloads:
     #   - podSelector:
     #       matchLabels:
-    #         app.kubernetes.io/name: unicorn
+    #         app.kubernetes.io/name: hostel
     allowFromWorkloads: []
 
 prometheus:
@@ -21,7 +21,7 @@ prometheus:
 
 grafana:
   admin:
-    existingSecret: "unicorn-tooling-grafana-admin"
+    existingSecret: "hostel-tooling-grafana-admin"
   persistence:
     storageClass: gp3
   serviceAccount:

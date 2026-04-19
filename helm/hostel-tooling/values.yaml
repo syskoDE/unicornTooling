@@ -109,3 +109,10 @@ grafana:
       matchLabels: {}
     extraIngressFrom: []
   resources: {}
+
+monitoring:
+  kubeStateMetrics:
+    enabled: false
+    namespace: kube-state-metrics
+    serviceName: kube-state-metrics
+    port: 8080

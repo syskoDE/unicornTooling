@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "unicorn-tooling.qdrantFullname" . }}
+  name: {{ include "hostel-tooling.qdrantFullname" . }}
   labels:
-    {{- include "unicorn-tooling.labels" . | nindent 4 }}
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
     app.kubernetes.io/component: qdrant
 spec:
-  serviceName: {{ include "unicorn-tooling.qdrantFullname" . }}
+  serviceName: {{ include "hostel-tooling.qdrantFullname" . }}
   replicas: 1
   selector:
     matchLabels:
-      {{- include "unicorn-tooling.selectorLabels" . | nindent 6 }}
+      {{- include "hostel-tooling.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: qdrant
   template:
     metadata:
       labels:
-        {{- include "unicorn-tooling.selectorLabels" . | nindent 8 }}
+        {{- include "hostel-tooling.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: qdrant
     spec:
-      serviceAccountName: {{ include "unicorn-tooling.qdrantFullname" . }}
+      serviceAccountName: {{ include "hostel-tooling.qdrantFullname" . }}
       automountServiceAccountToken: false
       securityContext:
         {{- toYaml .Values.qdrant.podSecurityContext | nindent 8 }}
