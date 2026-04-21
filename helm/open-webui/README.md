@@ -25,16 +25,21 @@ Der Scope ist bewusst klar getrennt:
 - Release: `open-webui`
 - Ingress: interner AWS ALB
 - Authentifizierung: OIDC gegen Entra ID
-- Backend fuer Modelle/Chats: `http://hostel.hostel.svc.cluster.local:8000/v1`
+- Backend fuer Modelle/Chats: `http://hostel-mvv.hostel-mvv.svc.cluster.local:8000/v1`
 - keine direkte Verbindung von `Open WebUI` zu `Qdrant`
 
 ## Voraussetzungen
 
-- `hostel` ist im Namespace `hostel` deployt
-- `hostel` ist ueber den Service `hostel` intern erreichbar
-- die `hostel`-NetworkPolicy erlaubt Zugriff aus `hostel-access`
+- `hostel-mvv` ist im Namespace `hostel-mvv` deployt
+- `hostel-mvv` ist ueber den Service `hostel-mvv` intern erreichbar
+- die `hostel-mvv`-NetworkPolicy erlaubt Zugriff aus `hostel-access`
 - ein internes DNS-/Zertifikats-Setup fuer `chat.<interne-domain>` existiert
 - eine Entra-ID-App fuer OIDC ist registriert
+
+Fuer den aktuellen `hostel-mvv`-Pfad muss die NetworkPolicy des Backends
+Ingress aus `hostel-access` fuer die Open-WebUI-Pods explizit erlauben. Ohne
+diese Freigabe bekommt Open WebUI bei `/api/models` nur Timeout-/Connection-
+Fehler, obwohl `OPENAI_API_BASE_URL` bereits korrekt gesetzt ist.
 
 ## Entra ID / OIDC
 
@@ -118,5 +123,5 @@ Nach dem Deploy sollten mindestens diese Punkte funktionieren:
 - ALB/Ingress zeigt auf `https://chat.<interne-domain>`
 - Login fuehrt zu Entra ID weiter
 - Callback nach `.../oauth/oidc/callback` funktioniert
-- Modelle aus `hostel` erscheinen in der Modellliste
-- Chats funktionieren gegen einen vorhandenen `hostel`-Agenten
+- Modelle aus `hostel-mvv` erscheinen in der Modellliste
+- Chats funktionieren gegen einen vorhandenen `hostel-mvv`-Agenten

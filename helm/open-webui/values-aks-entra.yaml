@@ -2,7 +2,7 @@ open-webui:
   persistence:
     storageClass: managed-csi-premium
 
-  openaiBaseApiUrl: "http://hostel.hostel.svc.cluster.local:8000/v1"
+  openaiBaseApiUrl: "http://hostel-mvv.hostel-mvv.svc.cluster.local:8000/v1"
 
   ingress:
     enabled: true
