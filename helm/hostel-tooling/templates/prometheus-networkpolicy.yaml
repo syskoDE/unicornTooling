@@ -13,8 +13,18 @@ spec:
       app.kubernetes.io/component: prometheus
   policyTypes:
     - Ingress
-  {{- if or .Values.prometheus.networkPolicy.allowFromNamespacePods.matchLabels .Values.prometheus.networkPolicy.extraIngressFrom }}
+  {{- if or .Values.grafana.enabled .Values.prometheus.networkPolicy.allowFromNamespacePods.matchLabels .Values.prometheus.networkPolicy.extraIngressFrom }}
   ingress:
+    {{- if .Values.grafana.enabled }}
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "hostel-tooling.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: grafana
+      ports:
+        - protocol: TCP
+          port: 9090
+    {{- end }}
     {{- if .Values.prometheus.networkPolicy.allowFromNamespacePods.matchLabels }}
     - from:
         - podSelector:

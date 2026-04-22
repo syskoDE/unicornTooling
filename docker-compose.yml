@@ -81,6 +81,7 @@ services:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../hostel/logs:/workspace-logs:ro
     depends_on:
       - loki
 
@@ -115,4 +116,3 @@ volumes:
   grafana_data:
   loki_data:
   tempo_data:
-

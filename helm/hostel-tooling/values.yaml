@@ -110,6 +110,58 @@ grafana:
     extraIngressFrom: []
   resources: {}
 
+loki:
+  enabled: true
+  image:
+    repository: grafana/loki
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3100
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 10Gi
+  serviceAccount:
+    create: true
+    annotations: {}
+  podSecurityContext:
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  resources: {}
+
+promtail:
+  enabled: true
+  image:
+    repository: grafana/promtail
+    tag: latest
+    pullPolicy: IfNotPresent
+  serviceAccount:
+    create: true
+    annotations: {}
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    runAsUser: 0
+    runAsNonRoot: false
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  resources: {}
+
 monitoring:
   kubeStateMetrics:
     enabled: false

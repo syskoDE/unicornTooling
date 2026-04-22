@@ -63,8 +63,11 @@ spec:
               subPath: dashboards.yml
             - name: data
               mountPath: /var/lib/grafana
+            {{- if .Values.loki.enabled }}
             - name: dashboards
-              mountPath: /var/lib/grafana/dashboards
+              mountPath: /var/lib/grafana/dashboards/hostel-performance.json
+              subPath: hostel-performance.json
+            {{- end }}
           resources:
             {{- toYaml .Values.grafana.resources | nindent 12 }}
       volumes:
@@ -78,6 +81,12 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if .Values.loki.enabled }}
         - name: dashboards
-          emptyDir: {}
+          configMap:
+            name: {{ include "hostel-tooling.grafanaFullname" . }}-config
+            items:
+              - key: hostel-performance.json
+                path: hostel-performance.json
+        {{- end }}
 {{- end }}

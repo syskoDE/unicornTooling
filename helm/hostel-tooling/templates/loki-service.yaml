@@ -1,0 +1,18 @@
+{{- if .Values.loki.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hostel-tooling.lokiFullname" . }}
+  labels:
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
+    app.kubernetes.io/component: loki
+spec:
+  type: {{ .Values.loki.service.type }}
+  selector:
+    {{- include "hostel-tooling.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: loki
+  ports:
+    - name: http
+      port: {{ .Values.loki.service.port }}
+      targetPort: http
+{{- end }}

@@ -12,6 +12,15 @@ scrape_configs:
   - job_name: docker
     pipeline_stages:
       - docker: {}
+      - match:
+          selector: '{job="docker"} |= "metric hostel_request_"'
+          stages:
+            - regex:
+                expression: '.*metric (?P<metric_name>hostel_request_(?:ttft|total)_seconds)\{entrypoint="(?P<entrypoint>[^"]+)",agent="(?P<agent>[^"]+)"\} (?P<metric_value>[0-9.]+)'
+            - labels:
+                metric_name:
+                entrypoint:
+                agent:
     static_configs:
       - targets:
           - localhost
@@ -19,3 +28,21 @@ scrape_configs:
           job: docker
           __path__: /var/lib/docker/containers/*/*-json.log
 
+  - job_name: hostel-files
+    pipeline_stages:
+      - match:
+          selector: '{job="hostel-files"} |= "metric hostel_request_"'
+          stages:
+            - regex:
+                expression: '.*metric (?P<metric_name>hostel_request_(?:ttft|total)_seconds)\{entrypoint="(?P<entrypoint>[^"]+)",agent="(?P<agent>[^"]+)"\} (?P<metric_value>[0-9.]+)'
+            - labels:
+                metric_name:
+                entrypoint:
+                agent:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: hostel-files
+          service: hostel
+          __path__: /workspace-logs/*.log

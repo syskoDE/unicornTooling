@@ -33,6 +33,16 @@ grafana:
   serviceAccount:
     annotations: {}
 
+loki:
+  persistence:
+    storageClass: managed-csi-premium
+  serviceAccount:
+    annotations: {}
+
+promtail:
+  serviceAccount:
+    annotations: {}
+
 monitoring:
   kubeStateMetrics:
     enabled: true

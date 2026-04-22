@@ -26,3 +26,13 @@ grafana:
     storageClass: gp3
   serviceAccount:
     annotations: {}
+
+loki:
+  persistence:
+    storageClass: gp3
+  serviceAccount:
+    annotations: {}
+
+promtail:
+  serviceAccount:
+    annotations: {}

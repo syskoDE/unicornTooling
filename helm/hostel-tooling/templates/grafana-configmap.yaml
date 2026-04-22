@@ -12,11 +12,21 @@ data:
 
     datasources:
       - name: Prometheus
+        uid: prometheus
         type: prometheus
         access: proxy
         url: http://{{ include "hostel-tooling.prometheusFullname" . }}:{{ .Values.prometheus.service.port }}
         isDefault: true
         editable: true
+{{- if .Values.loki.enabled }}
+      - name: Loki
+        uid: loki
+        type: loki
+        access: proxy
+        url: http://{{ include "hostel-tooling.lokiFullname" . }}:{{ .Values.loki.service.port }}
+        isDefault: false
+        editable: true
+{{- end }}
   dashboards.yml: |
     apiVersion: 1
 
@@ -30,4 +40,8 @@ data:
         allowUiUpdates: true
         options:
           path: /var/lib/grafana/dashboards
+{{- if .Values.loki.enabled }}
+  hostel-performance.json: |
+{{ .Files.Get "dashboards/hostel-performance.json" | nindent 4 }}
+{{- end }}
 {{- end }}

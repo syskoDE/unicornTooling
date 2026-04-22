@@ -7,5 +7,8 @@
 3. Port-forward Prometheus locally:
    kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "hostel-tooling.prometheusFullname" . }} 9090:{{ .Values.prometheus.service.port }}
 
-4. Grafana default credentials come from the chart values:
-   user: {{ .Values.grafana.adminUser }}
+4. Port-forward Loki locally:
+   kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "hostel-tooling.lokiFullname" . }} 3100:{{ .Values.loki.service.port }}
+
+5. Grafana admin user comes from the chart values:
+   user: {{ .Values.grafana.admin.user }}

@@ -1,0 +1,20 @@
+{{- if and .Values.promtail.enabled .Values.loki.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "hostel-tooling.promtailFullname" . }}
+  labels:
+    {{- include "hostel-tooling.labels" . | nindent 4 }}
+    app.kubernetes.io/component: promtail
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - namespaces
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+{{- end }}

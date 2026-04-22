@@ -7,6 +7,8 @@ Der aktuelle Scope ist bewusst klein:
 - `Qdrant`
 - `Prometheus`
 - `Grafana`
+- `Loki`
+- `Promtail`
 
 Fuer ein getrenntes menschliches Access-Frontend existiert bewusst ein separates Chart unter:
 
@@ -15,8 +17,6 @@ Fuer ein getrenntes menschliches Access-Frontend existiert bewusst ein separates
 Nicht im ersten Wurf enthalten:
 
 - `cAdvisor`
-- `Promtail`
-- `Loki`
 - `Tempo`
 - `OpenTelemetry Collector`
 - `kube-state-metrics` im Default-Install
@@ -199,6 +199,32 @@ helm upgrade --install hostel-tooling ./helm/hostel-tooling -n hostel-tooling --
 # Beispiel fuer EKS
 helm upgrade --install hostel-tooling ./helm/hostel-tooling -n hostel-tooling --create-namespace -f ./helm/hostel-tooling/values-eks.yaml
 ```
+
+## Performance-Logs in Grafana
+
+Mit dem aktuellen Chart kommen `Loki` und `Promtail` automatisch mit.
+
+Promtail sammelt Logzeilen aus Pods mit dem Label:
+
+- `app.kubernetes.io/name=hostel`
+
+Die neuen Performance-Metrikzeilen aus `hostel` landen dadurch in Loki und sind in Grafana ueber das Dashboard `Hostel Performance` sichtbar.
+
+Wichtig dafuer:
+
+- das `hostel`-Chart muss mit `hostel.performance.prometheusLogsEnabled=true` deployed sein
+- die `hostel`-Pods muessen wirklich das Label `app.kubernetes.io/name=hostel` tragen
+
+Typischer Zugriff:
+
+```bash
+kubectl port-forward -n hostel-tooling svc/hostel-tooling-grafana 3001:3000
+```
+
+Dann in Grafana:
+
+- Datasource `Loki`
+- Dashboard `Hostel Performance`
 
 ### Grafana Admin Secret
 

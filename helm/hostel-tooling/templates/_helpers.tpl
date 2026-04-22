@@ -38,3 +38,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "hostel-tooling.grafanaFullname" -}}
 {{- printf "%s-grafana" (include "hostel-tooling.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "hostel-tooling.lokiFullname" -}}
+{{- printf "%s-loki" (include "hostel-tooling.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "hostel-tooling.promtailFullname" -}}
+{{- printf "%s-promtail" (include "hostel-tooling.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

@@ -35,6 +35,17 @@ Mit Logs:
 docker compose --profile logs up -d
 ```
 
+Fuer Hostel-Performance-Logs aus lokal gestarteten Python-Prozessen:
+
+```bash
+cd ../hostel
+mkdir -p logs
+HOSTEL_LOG_DIR="$(pwd)/logs" PYTHONPATH=src uv run python -m hostel.core.app --config ./examples/config.yaml
+HOSTEL_LOG_DIR="$(pwd)/logs" PYTHONPATH=src uv run python -m hostel.client.openai_api
+```
+
+Promtail liest dann automatisch `../hostel/logs/*.log` ueber den `hostel-files`-Job ein.
+
 Mit Tracing:
 
 ```bash
@@ -84,6 +95,19 @@ Logs eines Service:
 ```bash
 docker compose logs -f qdrant
 ```
+
+Performance-Logs pruefen:
+
+```bash
+docker compose --profile logs logs -f promtail
+docker compose --profile logs logs -f loki
+```
+
+Grafana:
+
+- Dashboard: `Hostel Performance`
+- Datasource: `Loki`
+- Relevante Labels: `metric_name`, `entrypoint`, `agent`
 
 ## Hinweise fuer Hostel
 
